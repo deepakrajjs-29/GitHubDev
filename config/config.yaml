@@ -1,0 +1,60 @@
+# ==========================================================
+# GitHubDev Engine Configuration
+# ==========================================================
+
+project:
+  name: "GitHubDev Automation System"
+  version: "1.0.0"
+  author: "Deepak Raj JS"
+
+repositories:
+  engine_repo: "deepakrajjs-29/GitHubDev"
+  target_repo: "deepakrajjs-29/Codewithpython"
+  owner: "deepakrajjs-29"
+  target_branch: "main"
+  engine_branch: "main"
+
+scheduling:
+  timezone: "UTC"
+  daily_publish_time: "00:00"
+  weekly_cache_day: "Sunday"
+
+gemini:
+  primary_model: "gemini-2.0-flash"
+  fallback_model: "gemini-1.5-flash"
+  retry_count: 3
+  retry_delay_seconds: 2
+  temperature: 0.7
+  secret_name: "GEMINI_API_KEY"
+
+cache:
+  enabled: true
+  generate_weekly: true
+  cache_days: 7
+  cache_directory: "cache"
+
+publishing:
+  lesson_prefix: "Day"
+  number_padding: 3
+  file_extension: ".md"
+  target_directory: "."
+
+state:
+  file_path: "state/progress.json"
+
+syllabus:
+  file_path: "syllabus/python_90_days.json"
+  course_name: "Python 90 Days Mastery"
+  total_days: 90
+
+prompt:
+  template_path: "prompts/python_lesson_prompt.md"
+
+logging:
+  log_directory: "logs"
+  backup_directory: "backup"
+  automation_log_file: "backup/automation_log.md"
+  level: "INFO"
+
+github:
+  pat_secret_name: "GH_PAT"

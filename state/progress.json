@@ -1,0 +1,18 @@
+{
+  "current_lesson_number": 1,
+  "current_lesson_title": "Introduction to Python & Setup",
+  "last_published_lesson": 1,
+  "next_lesson": 2,
+  "total_published_lessons": 1,
+  "current_streak": 1,
+  "last_successful_publish": "2026-07-22T13:38:57.148401+00:00",
+  "last_successful_api_call": null,
+  "cached_until": null,
+  "last_cache_generation": null,
+  "current_course": "Python 90 Days Mastery",
+  "course_duration": 90,
+  "system_version": "1.0.0",
+  "publishing_status": "IDLE",
+  "recovery_required": false,
+  "pending_lesson": null
+}

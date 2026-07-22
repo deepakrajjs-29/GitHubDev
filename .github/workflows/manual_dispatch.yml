@@ -1,0 +1,67 @@
+name: Manual Workflow Dispatch
+
+on:
+  workflow_dispatch:
+    inputs:
+      force_day:
+        description: 'Specific day number to generate & publish (Leave empty for next lesson)'
+        required: false
+        type: string
+      dry_run:
+        description: 'Perform dry run (Generate & validate without committing)'
+        required: false
+        type: boolean
+        default: false
+      batch_cache:
+        description: 'Pre-generate weekly batch cache'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  manual-execution:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout GitHubDev Engine Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run Manual Engine Command
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || vars.GEMINI_API_KEY }}
+          GH_PAT: ${{ secrets.GH_PAT || vars.GH_PAT }}
+        run: |
+          CMD="python -m src.publisher"
+          if [ "${{ inputs.batch_cache }}" = "true" ]; then
+            CMD="$CMD --batch-cache"
+          fi
+          if [ -n "${{ inputs.force_day }}" ]; then
+            CMD="$CMD --force-day ${{ inputs.force_day }}"
+          fi
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            CMD="$CMD --dry-run"
+          fi
+          echo "Executing: $CMD"
+          $CMD
+
+      - name: Commit State Changes if Not Dry Run
+        if: ${{ inputs.dry_run != true }}
+        run: |
+          git config --global user.name "GitHubDev Automation Bot"
+          git config --global user.email "githubdev-bot@users.noreply.github.com"
+          git add state/progress.json cache/ logs/ backup/
+          if ! git diff --staged --quiet; then
+            git commit -m "chore(manual): update state after manual dispatch run [skip ci]"
+            git push origin main
+          fi
