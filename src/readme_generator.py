@@ -10,12 +10,22 @@ class ReadmeGenerator:
     """Generates dynamic README.md dashboard for target Codewithpython repository."""
 
     @staticmethod
-    def render_progress_bar(completed: int, total: int = 90, bar_length: int = 20) -> str:
-        """Renders an ASCII unicode progress bar string."""
+    def render_progress_bar(completed: int, total: int = 90, bar_length: int = 15) -> str:
+        """
+        Renders a visually attractive, vibrant green progress bar using native green emoji blocks.
+        """
         percentage = round((completed / total) * 100) if total > 0 else 0
-        filled_length = int(round(bar_length * completed / float(total))) if total > 0 else 0
-        bar = "█" * filled_length + "░" * (bar_length - filled_length)
-        return f"`[{bar}]` **{percentage}%** ({completed}/{total} Days)"
+        if completed > 0:
+            filled_length = max(1, int(round(bar_length * completed / float(total))))
+        else:
+            filled_length = 0
+            
+        filled_length = min(filled_length, bar_length)
+        unfilled_length = bar_length - filled_length
+        
+        # 🟩 = Green Square, ⬜ = Light Square
+        bar = "🟩" * filled_length + "⬜" * unfilled_length
+        return f"{bar} **{percentage}%** ({completed}/{total} Days)"
 
     @classmethod
     def generate_readme(
@@ -47,7 +57,15 @@ class ReadmeGenerator:
             except Exception:
                 next_lesson_str = f"Day {state.next_lesson:03d}"
 
-        last_updated = state.last_successful_publish or datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+        raw_updated = state.last_successful_publish
+        if raw_updated:
+            try:
+                dt = datetime.fromisoformat(raw_updated)
+                last_updated = dt.strftime("%Y-%m-%d %H:%M UTC")
+            except Exception:
+                last_updated = raw_updated
+        else:
+            last_updated = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
         # Generate Table of Contents for published lessons
         toc_rows = []
