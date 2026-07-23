@@ -20,8 +20,8 @@ scheduling:
   weekly_cache_day: "Sunday"
 
 gemini:
-  primary_model: "gemini-2.0-flash"
-  fallback_model: "gemini-1.5-flash"
+  primary_model: "gemini-flash-latest"
+  fallback_model: "gemini-flash-lite-latest"
   retry_count: 3
   retry_delay_seconds: 2
   temperature: 0.7
